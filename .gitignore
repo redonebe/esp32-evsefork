@@ -7,3 +7,4 @@
 .vscode
 unity-app
 managed_components
+dependencies.lock

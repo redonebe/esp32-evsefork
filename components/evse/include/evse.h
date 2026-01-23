@@ -180,6 +180,11 @@ bool evse_is_enabled(void);
 void evse_set_enabled(bool enabled);
 
 /**
+ * @brief Set test status
+ */
+void evse_set_rr_status(int rr_status);
+
+/**
  * @brief Is session consumption, charging time or under power limit reached
  *
  * @return true

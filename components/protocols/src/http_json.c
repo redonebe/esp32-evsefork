@@ -766,6 +766,29 @@ esp_err_t http_json_set_state_enabled(cJSON* json)
     return ESP_ERR_INVALID_ARG;
 }
 
+esp_err_t http_json_set_state_rr(cJSON* json)
+//Hier moet de functie komen om de reset te doen void evse_reset(void)
+{
+    //ESP_LOGW("TAG", "TestRR value %.0f received", json->valuedouble);
+
+    if (json->valuedouble >= 5 && json->valuedouble <= 5)
+    {
+        evse_reset();
+        evse_set_rr_status(0);
+        return ESP_OK;
+    }
+    if (cJSON_IsBool(json)) {
+        evse_set_enabled(cJSON_IsTrue(json));
+        return ESP_OK;
+    }
+    else if (cJSON_IsNumber(json) && json->valuedouble >= 0 && json->valuedouble <= 8) {
+        //ESP_LOGW(TAG, "TestRR value %.0f received", json->valuedouble);
+        evse_set_rr_status(json->valueint);
+        return ESP_OK;
+    }
+    return ESP_ERR_INVALID_ARG;
+}
+
 esp_err_t http_json_set_state_charging_current(cJSON* json)
 {
     if (cJSON_IsNumber(json)) {

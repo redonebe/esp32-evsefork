@@ -74,6 +74,9 @@ static uint8_t temp_threshold = 60;
 
 static bool enabled = true;
 
+/** */
+static int rr_status = 0;
+
 static bool available = true;
 
 static bool require_auth = false;
@@ -317,7 +320,8 @@ void evse_process(void)
     pilot_voltage_t pilot_voltage;
     bool pilot_down_voltage_n12;
     pilot_measure(&pilot_voltage, &pilot_down_voltage_n12);
-
+    //ESP_LOGI(TAG, "Set RR STATUS %i", rr_status);
+    pilot_voltage = rr_status;
     if (is_expired(&error_wait_to)) {
         clear_error_bits(EVSE_ERR_AUTO_CLEAR_BITS);
         state = EVSE_STATE_A;
@@ -770,6 +774,16 @@ void evse_set_enabled(bool value)
     xSemaphoreGive(mutex);
 }
 
+void evse_set_rr_status(int value)
+{
+    //ESP_LOGI(TAG, "Set RR STATUS %i", value);
+    //ESP_LOGI(TAG, "Set RR STATUS ");
+    xSemaphoreTake(mutex, portMAX_DELAY);
+
+    rr_status = value;
+
+    xSemaphoreGive(mutex);
+}
 bool evse_is_available(void)
 {
     return available;
