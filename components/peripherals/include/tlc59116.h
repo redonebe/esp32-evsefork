@@ -8,8 +8,8 @@
 #define TLC_59116_ADDRESS 0x60  /*!< Default I2C address for TLC59116 */
 #define I2C_SLAVE_NUM    0
 #define I2C_MASTER_TIMEOUT_MS 1000
-#define I2C_SCL_GPIO     9
-#define I2C_SDA_GPIO     8
+#define I2C_SCL_GPIO    22
+#define I2C_SDA_GPIO    21
 #define TLC_PWM       0x10        // Set PWM value for LEDs
 #define TLC_MODE0_REG 0x00
 #define TLC_MODE1_REG 0x01
