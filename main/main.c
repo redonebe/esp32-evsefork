@@ -24,6 +24,7 @@
 #include "script.h"
 #include "serial.h"
 #include "wifi.h"
+#include "tlc59116.h"
 
 #define AP_CONNECTION_TIMEOUT 60000  // 60sec
 #define RESET_HOLD_TIME       10000  // 10sec
@@ -168,29 +169,42 @@ static void update_leds(void)
         switch (led_state) {
         case EVSE_STATE_A:
             led_set_off(LED_ID_CHARGING);
+            tlc_blink_ready(false);
+            tlc_kit(false);
             led_set_off(LED_ID_ERROR);
             break;
         case EVSE_STATE_B1:
         case EVSE_STATE_B2:
             led_set_state(LED_ID_CHARGING, 500, 500);
+            tlc_blink_ready(true);
+            tlc_kit(false);
             led_set_off(LED_ID_ERROR);
             break;
         case EVSE_STATE_C1:
         case EVSE_STATE_D1:
             led_set_state(LED_ID_CHARGING, 1900, 100);
+            tlc_kit(false);
+            tlc_blink_ready(true);
             led_set_off(LED_ID_ERROR);
             break;
         case EVSE_STATE_C2:
         case EVSE_STATE_D2:
             led_set_on(LED_ID_CHARGING);
+            tlc_blink_ready(false);
+            tlc_kit(true);
             led_set_off(LED_ID_ERROR);
             break;
         case EVSE_STATE_E:
             led_set_off(LED_ID_CHARGING);
+            tlc_blink_ready(false);
+            tlc_kit(false);
             led_set_on(LED_ID_ERROR);
+            led_set_state(LED_ID_ERROR, 500, 500);
             break;
         case EVSE_STATE_F:
             led_set_off(LED_ID_CHARGING);
+            tlc_blink_ready(false);
+            tlc_kit(false);
             led_set_state(LED_ID_ERROR, 500, 500);
             break;
         }
