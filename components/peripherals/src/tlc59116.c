@@ -15,6 +15,7 @@ static bool blinking = false;
 static bool running = false;
 static TimerHandle_t tlc_timer ;
 static int kit = 0;
+static bool tlc_init = false;
 
 static esp_err_t tlc_register_write_byte(i2c_master_dev_handle_t dev_handle, uint8_t reg_addr, uint8_t data)
 {
@@ -35,7 +36,10 @@ static void timer_callback(TimerHandle_t xTimer)
     }
 }
 void tlc_kit(bool enable) {
-    
+    if(!tlc_init) {
+        ESP_LOGW(TAG, "TLC59116 not initialized, cannot start kit running.");
+        return;
+    }
     if (running && !enable) {
         running = !running;
         xTimerStop(tlc_timer, BLOCK_TIME);
@@ -49,6 +53,11 @@ void tlc_kit(bool enable) {
 }
 
 void tlc_ready(bool state) {
+        if(!tlc_init) {
+        ESP_LOGW(TAG, "TLC59116 not initialized, cannot start kit running.");
+        return;
+    }
+    
     ESP_LOGD(TAG, "TLC59116 ready LED ON.");
     for (uint8_t i_t = 1; i_t < 15; i_t++) {
         ESP_ERROR_CHECK(tlc_register_write_byte(dev_handle,  TLC_PWM_REG_0 +i_t, 0x00));
@@ -56,6 +65,11 @@ void tlc_ready(bool state) {
     ESP_ERROR_CHECK(tlc_register_write_byte(dev_handle, TLC_PWM_REG_0, state ? TLC_PWM : 0));  // Device ready
 }
 void tlc_blink_ready(bool on) {
+        if(!tlc_init) {
+        ESP_LOGW(TAG, "TLC59116 not initialized, cannot start kit running.");
+        return;
+    }
+    
     if (on) {
         if (blinking) {
             return;
@@ -90,7 +104,7 @@ void tlc59116_init() {
 
     if (i2c_master_probe(bus_handle, TLC_59116_ADDRESS, 100) == 0) {
         ESP_LOGI(TAG, "TLC59116 found at address 0x%02X", TLC_59116_ADDRESS);
-        // tlc_ready = 1;
+        tlc_init = true;
     } else {
         ESP_LOGE(TAG, "TLC59116 not found at address 0x%02X",
                  TLC_59116_ADDRESS);
